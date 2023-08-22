@@ -2,7 +2,7 @@ import jwtDecode from 'jwt-decode';
 import { createStore } from 'vuex'
 import VuexPersistance from 'vuex-persist';
 
-import calculatorApi from '@/services/api-danimax_restaurant'
+import danimaxRestaurantApi from '@/services/api-danimax_restaurant'
 
 
 export default createStore({
@@ -51,7 +51,7 @@ export default createStore({
   actions: {
     async login({ commit }, { username, password }) {
       // Make an API request to authenticate the user
-      const response = await calculatorApi.login(username, password);
+      const response = await danimaxRestaurantApi.login(username, password);
       const data = response.data;
       // Retrieve the JWT token from the response
       const token = data.token;

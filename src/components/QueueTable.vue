@@ -6,28 +6,6 @@
           cols="12"
           md="4"
         >
-          <v-card
-            class="mx-auto"
-            color="grey-lighten-3"
-          >
-            <v-card-text>
-              <v-text-field
-                v-model="filterText"
-                density="compact"
-                variant="solo"
-                label="Search in table"
-                append-inner-icon="mdi-magnify"
-                single-line
-                hide-details
-                @update:model-value="filteredRecords()"
-              />
-            </v-card-text>
-          </v-card>
-        </v-col>
-        <v-col
-          cols="12"
-          md="4"
-        >
           <div
             class="alert alert-light"
             role="alert"
@@ -56,7 +34,6 @@
           <th>Status</th>
           <th>Create At</th>
           <th>Update At</th>
-          <th>Buttons</th>
         </tr>
       </thead>
       <tbody>
@@ -70,23 +47,6 @@
           <td>{{ data.status }}</td>
           <td>{{ data.createDate }}</td>
           <td>{{ data.updateDate }}</td>
-          <td>
-            <v-btn
-              v-if="data.status !== 'done'"
-              density="compact"
-              icon="mdi-delete"
-              color="error"
-              @click="reProcessOrder(record.id)"
-            >
-              <v-tooltip
-                activator="parent"
-                location="start"
-              >
-                Re-Process Order
-              </v-tooltip>
-            </v-btn>
-            ...
-          </td>
         </tr>
       </tbody>
     </table>
@@ -159,8 +119,6 @@ export default {
       recordsPerPage: 10,
       arrRecordsPerPage: [5, 10, 50, 100],
       orderDirections: ['asc', 'desc'],
-      orderBy: "",
-      orderByDirection: 'asc',
       headers: [
         {
           title: "ID",
@@ -220,10 +178,9 @@ export default {
           this.currentPage = 1;
         }
         const filters = this.constructFilters();
-        const res = await danimaxRestaurantApi.getRecords(filters);
+        const res = await danimaxRestaurantApi.getCurrentRecords(filters);
         
         this.tableData = res;
-        console.log("this.data", this.tableData);
         // Set initial values
         this.currentPage = this.tableData.metadata.page;
         this.totalPages = (this.currentPage > 1) ? this.currentPage : 1;
@@ -234,25 +191,6 @@ export default {
         this.snackbar = {
           show: true,
           message: "Error getting Records Info",
-          color: "error",
-          timeout: 3000,
-        };
-      }
-    },
-    async reProcessOrder(id) {
-      try {
-        await danimaxRestaurantApi.reProcessOrder(id);
-        this.fetchData();
-        this.snackbar = {
-          show: true,
-          message: `Deleted record with ID: ${id}`,
-          color: "success",
-          timeout: 3000,
-        };
-      } catch (error) {
-        this.snackbar = {
-          show: true,
-          message: `Error deleting record with ID: ${id}`,
           color: "error",
           timeout: 3000,
         };
@@ -298,8 +236,11 @@ export default {
       this.filteredData = this.tableData.data
         .filter((record) => {
           return (
+            record._id.toString().includes(this.filterText) ||
             record.name.toString().includes(this.filterText) ||
-            record.status.toString().includes(this.filterText)
+            record.status.toString().includes(this.filterText) ||
+            record.createDate.toString().includes(this.filterText) ||
+            record.updateDate.toString().includes(this.filterText)
           );
         });
     }

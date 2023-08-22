@@ -27,15 +27,7 @@
           />
         </v-list>
         <template #append>
-          <div class="pa-2">
-            <v-btn
-              block
-              prepend-icon="mdi-logout"
-              @click="handleLogout"
-            >
-              Logout
-            </v-btn>
-          </div>
+          <div class="pa-2" />
         </template>
       </v-navigation-drawer>
       <v-main>
@@ -53,26 +45,14 @@
             />
           </template>
           <v-app-bar-title prepend-icon="mdi-calculator-variant">
-            Arithmetic calculator
+            Danimax Restaurant ¡Free!
           </v-app-bar-title>
           <v-spacer />
-          <v-btn
-            icon
-            @click="handleLogout"
-          >
-            <v-icon>mdi-logout</v-icon>
-          </v-btn>
         </v-app-bar>
         <v-container>
           <v-row>
             <v-col
               cols="12"
-              sm="2"
-            />
-
-            <v-col
-              cols="12"
-              sm="8"
             >
               <v-sheet
                 min-height="70vh"
@@ -82,11 +62,6 @@
                 <router-view />
               </v-sheet>
             </v-col>
-
-            <v-col
-              cols="12"
-              sm="2"
-            />
           </v-row>
         </v-container>
       </v-main>
@@ -102,13 +77,14 @@ export default {
     drawer: null,
     links: [
       { name: 'Home', route: "/home", icon: "mdi-home-assistant" },
-      { name: 'Operation', route: "/operation", icon: "mdi-calculator" },
-      { name: 'Records', route: "/records", icon: "mdi-google-spreadsheet" },
+      { name: 'Kitchen', route: "/operation", icon: "mdi-silverware-fork-knife" },
+      { name: 'Orders', route: "/records", icon: "mdi-food-steak" },
+      { name: 'Queues Orders', route: "/queues", icon: "mdi-food-steak-off" },
     ],
   }),
   computed: {
     userName() {
-      return this.$store.getters.getUserName;
+      return this.$store.getters.getUserName || "Anonymous";
     },
   },
   methods: {

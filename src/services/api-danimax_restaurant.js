@@ -1,22 +1,16 @@
 import axios from 'axios'
-const moment = require('moment');
 const apiUrl = process.env.VUE_APP_BACKEND_API_URL;
 const apiVersion = 'v1';
 
 
 const api = axios.create({
-  baseURL: apiUrl,
-  headers: {
-    "Access-Control-Allow-Origin": "*",
-  }
+  baseURL: apiUrl
 })
 
+// Delete headers backend not required
 api.interceptors.request.use(
   (config) => {
-    const updatedVuexData = localStorage.getItem('vuex');
-    const updatedVuexObject = JSON.parse(updatedVuexData);
-    const updatedToken = updatedVuexObject?.token;
-    config.headers.Authorization = `Bearer ${updatedToken}`;
+    delete config.headers;
     return config;
   },
   (error) => {
@@ -27,23 +21,34 @@ api.interceptors.request.use(
 export default {
   async getRecords(params) {
     try {
-      const response = await api.get(`/api/${apiVersion}/records/filter?${params}`);
+      const response = await api.get(`/dev/${apiVersion}/orders?${params}`);
       return response.data
     } catch (error) {
       throw new Error(error)
     }
   },
-  async deletedRecord(record_id) {
+  async getCurrentRecords(params) {
     try {
-      const response = await api.delete(`/api/${apiVersion}/records/by_id/${record_id}`);
+      const response = await api.get(`/dev/${apiVersion}/orders/current?${params}`);
       return response.data
     } catch (error) {
       throw new Error(error)
     }
   },
-  async createOperation(bodyData) {
+  async reProcessOrder(orderId) {
     try {
-      const response = await api.post(`/api/${apiVersion}/calculator/operation`, bodyData);
+      const bodyData = {
+        orderId
+      }
+      const response = await api.post(`/dev/${apiVersion}/re_process_order`, bodyData);
+      return response.data
+    } catch (error) {
+      throw new Error(error)
+    }
+  },
+  async createOrder(bodyData) {
+    try {
+      const response = await api.post(`/dev/${apiVersion}/orders`, bodyData);
       return response.data
     } catch (error) {
       if (error.response.status === 400) {
@@ -53,20 +58,4 @@ export default {
       throw new Error(error);
     }
   },
-  async login(username, password) {
-    try {
-      const currentDate = moment().utc().format("YYYY-MM-DD");
-      const uuid = process.env.VUE_APP_CALCULATOR_API_VALID_PASS_ID;
-      const passId = `${uuid}-${currentDate}`;
-
-      const response = await api.post('/auth/getToken', {
-        passId,
-        username,
-        password,
-      })
-      return response.data
-    } catch (error) {
-      throw new Error(error)
-    }
-  }
 }

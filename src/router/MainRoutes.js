@@ -1,5 +1,6 @@
 const HomeViewComponent = () => import(/* webpackChunkName: "home" */ '../views/HomeView.vue');
 const RecordsViewComponent = () => import(/* webpackChunkName: "records" */ '../views/RecordsView.vue');
+const QueuesViewComponent = () => import(/* webpackChunkName: "queues" */ '../views/QueueView.vue');
 const OperationViewComponent = () => import(/* webpackChunkName: "operation" */ '../views/OperationView.vue');
 
 const MainRoutes = {
@@ -22,6 +23,11 @@ const MainRoutes = {
             path: '/records',
             name: 'records',
             component: RecordsViewComponent
+        },
+        {
+            path: '/queues',
+            name: 'queues',
+            component: QueuesViewComponent
         },
         {
             path: '/operation',

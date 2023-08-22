@@ -8,45 +8,16 @@
       <div class="left-column">
         <v-card class="mx-auto">
           <v-card-item>
-            <v-card-title>Operation</v-card-title>
+            <v-card-title>Create order</v-card-title>
           </v-card-item>
 
           <v-card-text>
             <p>
-              You can prompt the numbers and the calculator will return the arithmetic calculation or the result depending
-              on
-              the type of operation you choose.
+              Click in the green button to create a new order
             </p>
-            <v-form
-              v-model="valid"
-              @submit.prevent="submitForm"
-            >
-              <v-select
-                v-model="operationType"
-                label="Operation Type"
-                :items="operationTypes"
-                :rules="operationTypeRules"
-                @update:model-value="validateStates()"
-              />
-              <v-text-field
-                v-if="show_a"
-                v-model="a"
-                label="A Input"
-                :rules="numberTypeRules"
-              />
-              <v-text-field
-                v-if="show_b"
-                v-model="b"
-                label="B Input"
-                :rules="numberTypeRules"
-              />
-              <v-text-field
-                v-if="show_Length"
-                v-model="length"
-                label="Length"
-                :rules="numberTypeRules"
-              />
+            <v-form @submit.prevent="submitForm">
               <v-btn
+                :disabled="requestInProgress"
                 type="submit"
                 color="primary"
               >
@@ -68,14 +39,18 @@
       cols="12"
       md="6"
     >
-      <v-card flat>
+      <v-progress-linear
+        v-if="loading"
+        indeterminate
+        color="green"
+      />
+      <v-card
+        v-if="!loading"
+        flat
+      >
         <v-card-text>
           <v-list class="text-left">
-            <strong><v-list-item
-              v-for="item in resultOperation"
-              :key="item"
-              :title="item"
-            /></strong>
+            <p>Recipe Name: <strong>{{ recipeName }}</strong></p>
           </v-list>
           <v-divider />
           <v-code class="text-justify">
@@ -88,47 +63,15 @@
 </template>
   
 <script>
-import calculatorApi from '@/services/api-danimax_restaurant'
+import danimaxRestaurantApi from '@/services/api-danimax_restaurant'
 
 export default {
   data() {
     return {
-      valid: false,
-      show_a: true,
-      show_b: true,
-      show_Length: false,
-      operationType: null,
-      a: null,
-      b: null,
-      length: '',
-      resultOperation: '',
+      requestInProgress: false,
+      loading: false,
+      recipeName: '',
       resultRaw: '',
-      operationTypes: ['addition', 'subtraction', 'multiplication', 'division', 'square_root', 'random_string'],
-      operationTypeRules: [
-        value => {
-          if (value) return true
-
-          return 'Operation type is required.'
-        },
-        value => {
-          if (value?.length >= 1) return true
-
-          return 'The input required a minimum length of 1 character.'
-        },
-      ],
-      numberTypeRules: [
-        value => {
-          if (value) return true
-
-          return 'Input type is required.'
-        },
-        value => {
-          const isNumber = value?.length >= 1 && !isNaN(Number(value));
-          if (isNumber) return true
-
-          return 'The input should be a number with a minimum length of 1 character. '
-        },
-      ],
       snackbar: {
         show: false,
         message: '',
@@ -138,51 +81,38 @@ export default {
     };
   },
   methods: {
-    resetForm() {
-      this.operationType = null;
-      this.a = null;
-      this.b = null;
-      this.length = null;
-    },
     async submitForm() {
+      // Exit early if a request is already in progress
+      if (this.requestInProgress) {
+        return;
+      }
+      this.requestInProgress = true;
+      this.loading = true;
       try {
-        this.resultOperation = '';
+        this.recipeName = '';
         this.resultRaw='';
-        if (this.valid) {
-          const formData = {
-            operationType: this.operationType,
-            a: this.a,
-            b: this.b,
-            length: this.length
-          };
-          const response = await calculatorApi.createOperation(formData);
-          const res = response.data;
-          this.resultOperation = [`Operation Result: ${res.operationResult}`,`Operation Type: ${this.operationType}`];
-          this.resultRaw = JSON.stringify(res.record);
-          this.resetForm();
+        const formData = {};
+        const response = await danimaxRestaurantApi.createOrder(formData);
+        this.recipeName = response.message.name;
+        this.resultRaw = JSON.stringify(response.message.ingredients);
+        this.snackbar = {
+          show: true,
+          message: "Order created successfully, wait for the kitchen to prepare the dish",
+          color: 'success',
+          timeout: 3000
         }
       } catch (e) {
+        console.error("e", e); 
         this.snackbar = {
           show: true,
           message: e.message,
           color: 'error',
           timeout: 3000
         };
-      }
-    },
-    validateStates() {
-      if (this.operationType === this.operationTypes[4]) {
-        this.show_a = true;
-        this.show_b = false;
-        this.show_Length = false;
-      } else if (this.operationType === this.operationTypes[5]) {
-        this.show_a = false;
-        this.show_b = false;
-        this.show_Length = true;
-      } else {
-        this.show_a = true;
-        this.show_b = true;
-        this.show_Length = false;
+      } finally {
+        this.loading = false
+        // Set requestInProgress back to false once request is done
+        this.requestInProgress = false;
       }
     }
   }
