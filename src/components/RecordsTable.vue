@@ -74,9 +74,9 @@
             <v-btn
               v-if="data.status !== 'done'"
               density="compact"
-              icon="mdi-delete"
-              color="error"
-              @click="reProcessOrder(record.id)"
+              icon="mdi-warning-outline"
+              color="warning"
+              @click="reProcessOrder(data._id)"
             >
               <v-tooltip
                 activator="parent"
@@ -85,7 +85,9 @@
                 Re-Process Order
               </v-tooltip>
             </v-btn>
-            ...
+            <p v-else>
+              ...
+            </p>
           </td>
         </tr>
       </tbody>
@@ -245,14 +247,14 @@ export default {
         this.fetchData();
         this.snackbar = {
           show: true,
-          message: `Deleted record with ID: ${id}`,
+          message: `Re-processed record with ID: ${id}`,
           color: "success",
           timeout: 3000,
         };
       } catch (error) {
         this.snackbar = {
           show: true,
-          message: `Error deleting record with ID: ${id}`,
+          message: `Error Re-processing record with ID: ${id}`,
           color: "error",
           timeout: 3000,
         };
