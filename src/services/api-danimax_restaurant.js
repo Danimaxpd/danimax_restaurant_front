@@ -27,6 +27,22 @@ export default {
       throw new Error(error)
     }
   },
+  async getWarehouseInventoryRecords(params) {
+    try {
+      const response = await api.get(`/dev/${apiVersion}/warehouse/inventory?${params}`);
+      return response.data
+    } catch (error) {
+      throw new Error(error)
+    }
+  },
+  async getWarehousePurchasedRecords(params) {
+    try {
+      const response = await api.get(`/dev/${apiVersion}/warehouse/purchased?${params}`);
+      return response.data
+    } catch (error) {
+      throw new Error(error)
+    }
+  },
   async getCurrentRecords(params) {
     try {
       const response = await api.get(`/dev/${apiVersion}/orders/current?${params}`);

@@ -80,6 +80,8 @@ export default {
       { name: 'Kitchen', route: "/operation", icon: "mdi-silverware-fork-knife" },
       { name: 'Orders', route: "/records", icon: "mdi-food-steak" },
       { name: 'Queues Orders', route: "/queues", icon: "mdi-food-steak-off" },
+      { name: 'Inventory', route: "/warehouse/inventory", icon: "mdi-warehouse" },
+      { name: 'Purchases', route: "/warehouse/purchased", icon: "mdi-bank-transfer" },
     ],
   }),
   computed: {
