@@ -1,6 +1,9 @@
 <template>
   <v-row>
-    <v-col cols="12" md="6">
+    <v-col
+      cols="12"
+      md="6"
+    >
       <!-- Content for the left column -->
       <div class="left-column">
         <v-card class="mx-auto">
@@ -14,28 +17,65 @@
               on
               the type of operation you choose.
             </p>
-            <v-form v-model="valid" @submit.prevent="submitForm">
-              <v-select v-model="operationType" label="Operation Type" :items="operationTypes" :rules="operationTypeRules"
-                @update:model-value="validateStates()" />
-              <v-text-field v-if="show_a" v-model="a" label="A Input" :rules="numberTypeRules" />
-              <v-text-field v-if="show_b" v-model="b" label="B Input" :rules="numberTypeRules" />
-              <v-text-field v-if="show_Length" v-model="length" label="Length" :rules="numberTypeRules" />
-              <v-btn type="submit" color="primary">
+            <v-form
+              v-model="valid"
+              @submit.prevent="submitForm"
+            >
+              <v-select
+                v-model="operationType"
+                label="Operation Type"
+                :items="operationTypes"
+                :rules="operationTypeRules"
+                @update:model-value="validateStates()"
+              />
+              <v-text-field
+                v-if="show_a"
+                v-model="a"
+                label="A Input"
+                :rules="numberTypeRules"
+              />
+              <v-text-field
+                v-if="show_b"
+                v-model="b"
+                label="B Input"
+                :rules="numberTypeRules"
+              />
+              <v-text-field
+                v-if="show_Length"
+                v-model="length"
+                label="Length"
+                :rules="numberTypeRules"
+              />
+              <v-btn
+                type="submit"
+                color="primary"
+              >
                 Submit
               </v-btn>
             </v-form>
           </v-card-text>
-          <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+          <v-snackbar
+            v-model="snackbar.show"
+            :color="snackbar.color"
+            :timeout="snackbar.timeout"
+          >
             {{ snackbar.message }}
           </v-snackbar>
         </v-card>
       </div>
     </v-col>
-    <v-col cols="12" md="6">
+    <v-col
+      cols="12"
+      md="6"
+    >
       <v-card flat>
         <v-card-text>
           <v-list class="text-left">
-            <strong><v-list-item v-for="item in resultOperation" :key="item" :title="item" /></strong>
+            <strong><v-list-item
+              v-for="item in resultOperation"
+              :key="item"
+              :title="item"
+            /></strong>
           </v-list>
           <v-divider />
           <v-code class="text-justify">

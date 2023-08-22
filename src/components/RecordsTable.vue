@@ -2,30 +2,77 @@
   <div>
     <v-container>
       <v-row>
-        <v-col cols="12" md="4">
-          <v-card class="mx-auto" color="grey-lighten-3">
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <v-card
+            class="mx-auto"
+            color="grey-lighten-3"
+          >
             <v-card-text>
-              <v-text-field v-model="filterText" density="compact" variant="solo" label="Search in table"
-                append-inner-icon="mdi-magnify" single-line hide-details @update:model-value="filteredRecords()" />
+              <v-text-field
+                v-model="filterText"
+                density="compact"
+                variant="solo"
+                label="Search in table"
+                append-inner-icon="mdi-magnify"
+                single-line
+                hide-details
+                @update:model-value="filteredRecords()"
+              />
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" md="2">
-          <div class="alert alert-light" role="alert">
-            <v-select v-model="orderBy" :items="headers" label="Order By" variant="underlined"
-              @update:model-value="fetchData(true)" />
+        <v-col
+          cols="12"
+          md="2"
+        >
+          <div
+            class="alert alert-light"
+            role="alert"
+          >
+            <v-select
+              v-model="orderBy"
+              :items="headers"
+              label="Order By"
+              variant="underlined"
+              @update:model-value="fetchData(true)"
+            />
           </div>
         </v-col>
-        <v-col cols="12" md="2">
-          <div class="alert alert-light" role="alert">
-            <v-select v-model="orderByDirection" :items="orderDirections" label="Direction" variant="underlined"
-              @update:model-value="fetchData(true)" />
+        <v-col
+          cols="12"
+          md="2"
+        >
+          <div
+            class="alert alert-light"
+            role="alert"
+          >
+            <v-select
+              v-model="orderByDirection"
+              :items="orderDirections"
+              label="Direction"
+              variant="underlined"
+              @update:model-value="fetchData(true)"
+            />
           </div>
         </v-col>
-        <v-col cols="12" md="4">
-          <div class="alert alert-light" role="alert">
-            <v-select v-model="recordsPerPage" :items="arrRecordsPerPage" label="Records Per Page" variant="underlined"
-              @update:model-value="fetchData(true)" />
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <div
+            class="alert alert-light"
+            role="alert"
+          >
+            <v-select
+              v-model="recordsPerPage"
+              :items="arrRecordsPerPage"
+              label="Records Per Page"
+              variant="underlined"
+              @update:model-value="fetchData(true)"
+            />
           </div>
         </v-col>
       </v-row>
@@ -45,7 +92,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="record in filteredData" :key="record.id">
+        <tr
+          v-for="record in filteredData"
+          :key="record.id"
+        >
           <td>{{ record.id }}</td>
           <td>{{ record.operation_id }}</td>
           <td>{{ record.user_id }}</td>
@@ -54,8 +104,16 @@
           <td>{{ record.operation_response }}</td>
           <td>{{ record.date }}</td>
           <td>
-            <v-btn density="compact" icon="mdi-delete" color="error" @click="deleteRecord(record.id)">
-              <v-tooltip activator="parent" location="start">
+            <v-btn
+              density="compact"
+              icon="mdi-delete"
+              color="error"
+              @click="deleteRecord(record.id)"
+            >
+              <v-tooltip
+                activator="parent"
+                location="start"
+              >
                 Do you want to delete?
               </v-tooltip>
             </v-btn>
@@ -65,22 +123,51 @@
     </table>
     <nav aria-label="Page navigation">
       <ul class="pagination">
-        <li class="page-item" :class="{ disabled: currentPage === 1 }">
-          <a class="page-link" href="#" aria-label="Previous" @click="changePage(currentPage - 1)">
+        <li
+          class="page-item"
+          :class="{ disabled: currentPage === 1 }"
+        >
+          <a
+            class="page-link"
+            href="#"
+            aria-label="Previous"
+            @click="changePage(currentPage - 1)"
+          >
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
-        <li v-for="page in totalPages" :key="page" class="page-item" :class="{ active: currentPage === page }">
-          <a class="page-link" href="#" @click="changePage(page)">{{ page }}</a>
+        <li
+          v-for="page in totalPages"
+          :key="page"
+          class="page-item"
+          :class="{ active: currentPage === page }"
+        >
+          <a
+            class="page-link"
+            href="#"
+            @click="changePage(page)"
+          >{{ page }}</a>
         </li>
-        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-          <a class="page-link" href="#" aria-label="Next" @click="changePage(currentPage + 1)">
+        <li
+          class="page-item"
+          :class="{ disabled: currentPage === totalPages }"
+        >
+          <a
+            class="page-link"
+            href="#"
+            aria-label="Next"
+            @click="changePage(currentPage + 1)"
+          >
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>
       </ul>
     </nav>
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+    <v-snackbar
+      v-model="snackbar.show"
+      :color="snackbar.color"
+      :timeout="snackbar.timeout"
+    >
       {{ snackbar.message }}
     </v-snackbar>
   </div>

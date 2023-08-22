@@ -1,41 +1,36 @@
+const HomeViewComponent = () => import(/* webpackChunkName: "home" */ '../views/HomeView.vue');
+const RecordsViewComponent = () => import(/* webpackChunkName: "records" */ '../views/RecordsView.vue');
+const OperationViewComponent = () => import(/* webpackChunkName: "operation" */ '../views/OperationView.vue');
+
 const MainRoutes = {
-    path: '/auth',
+    path: '/',
     component: () => import('@/layouts/MainLayout.vue'),
     meta: {
         requiresAuth: true
     },
     children: [
         {
+            path: '/',
+            redirect: '/home'
+        },
+        {
             path: '/home',
             name: 'home',
-            component: () => import(/* webpackChunkName: "about" */ '../views/HomeView.vue')
+            component: HomeViewComponent
         },
         {
             path: '/records',
             name: 'records',
-            // route level code-splitting
-            // this generates a separate chunk (about.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () => import(/* webpackChunkName: "about" */ '../views/RecordsView.vue')
+            component: RecordsViewComponent
         },
         {
             path: '/operation',
             name: 'operation',
-            // route level code-splitting
-            // this generates a separate chunk (about.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () => import(/* webpackChunkName: "about" */ '../views/OperationView.vue')
+            component: OperationViewComponent
         },
-        // {
-        //   path: '/logout',
-        //   name: 'logout',
-        //   // route level code-splitting
-        //   // this generates a separate chunk (about.[hash].js) for this route
-        //   // which is lazy-loaded when the route is visited.
-        //   component: () => import(/* webpackChunkName: "about" */ '../views/OperationView.vue')
-        // }
     ]
 };
+
 
 
 

@@ -1,6 +1,7 @@
 import axios from 'axios'
 const moment = require('moment');
 const apiUrl = process.env.VUE_APP_BACKEND_API_URL;
+const apiVersion = 'v1';
 
 
 const api = axios.create({
