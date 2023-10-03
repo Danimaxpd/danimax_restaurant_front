@@ -2,6 +2,8 @@
 
 A GUI for a simple user consume the lambda endpoints in aws or local.
 
+[DEMO AWSS3](http://danimaxrestaurantfront.s3-website-us-east-1.amazonaws.com/records) **note**: `It can be shutdown at any time.`
+
 ## BackEnd Project
 
 [https://github.com/Danimaxpd/danimax_restaurant](https://github.com/Danimaxpd/danimax_restaurant)
