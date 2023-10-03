@@ -43,7 +43,11 @@
         </v-col>
       </v-row>
     </v-container>
-
+    <v-progress-linear
+      v-if="isLoading"
+      indeterminate
+      color="green"
+    />
     <table
       v-if="filteredData.length !== 0"
       class="table table-striped table-hover"
@@ -66,7 +70,7 @@
         >
           <td>{{ data._id }}</td>
           <td>{{ data.name }}</td>
-          <td>{{ JSON.stringify(data.ingredients) }}</td>
+          <td>{{ formatIngredients(data.ingredients) }}</td>
           <td>{{ data.status }}</td>
           <td>{{ data.createDate }}</td>
           <td>{{ data.updateDate }}</td>
@@ -160,9 +164,9 @@ export default {
       totalPages: 0,
       recordsPerPage: 10,
       arrRecordsPerPage: [5, 10, 50, 100],
-      orderDirections: ['asc', 'desc'],
+      orderDirections: ["asc", "desc"],
       orderBy: "",
-      orderByDirection: 'asc',
+      orderByDirection: "asc",
       headers: [
         {
           title: "ID",
@@ -189,46 +193,56 @@ export default {
           value: "updateDate",
         },
       ],
-      filteredData:[],
+      filteredData: [],
       tableData: {
         data: [],
         metadata: {
           totalCount: 0,
           currentPage: 1,
           totalPages: 0,
+          total: 0,
         },
       },
       snackbar: {
         show: false,
-        message: '',
-        color: '',
-        timeout: 3000
+        message: "",
+        color: "",
+        timeout: 3000,
       },
+      isLoading: false,
     };
   },
   mounted() {
     this.fetchData();
   },
   methods: {
+    formatIngredients(ingredients) {
+      return ingredients
+        .map((ingredient) => `${ingredient.name}: ${ingredient.qty}`)
+        .join(", ");
+    },
     async changePage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
         await this.fetchData();
+        window.scrollTo(0, 0);
       }
     },
-    async fetchData(resetPage=false) {
+    async fetchData(resetPage = false) {
+      this.isLoading = true;
       try {
-        if(resetPage) {
+        if (resetPage) {
           this.currentPage = 1;
         }
         const filters = this.constructFilters();
         const res = await danimaxRestaurantApi.getRecords(filters);
-        
+
         this.tableData = res;
-        console.log("this.data", this.tableData);
         // Set initial values
         this.currentPage = this.tableData.metadata.page;
-        this.totalPages = (this.currentPage > 1) ? this.currentPage : 1;
+        this.totalPages = Math.ceil(
+          this.tableData.metadata.total / this.recordsPerPage
+        );
         this.filteredRecords();
       } catch (error) {
         console.log("this.data", this.tableData);
@@ -239,6 +253,8 @@ export default {
           color: "error",
           timeout: 3000,
         };
+      } finally {
+        this.isLoading = false;
       }
     },
     async reProcessOrder(id) {
@@ -261,50 +277,36 @@ export default {
       }
     },
     stringFilter(type, value) {
-      let result = "";
-      switch (type) {
-        case "skip":
-          result = `skip=${value}`;
-          break;
-        case "take":
-          result = `pageSize=${value}`;
-          break;
-        case "orderBy":
-          result = `orderBy=${value}`;
-          break;
-        case "where":
-          result = `where=${value}`;
-          break;
-      }
-      return result;
+      const filterMap = {
+        page: `page=${value}`,
+        skip: `skip=${value}`,
+        take: `pageSize=${value}`,
+        orderBy: `orderBy=${value}`,
+        where: `where=${value}`,
+      };
+
+      return filterMap[type] || "";
     },
-    constructFilters(){
+    constructFilters() {
       const start = (this.currentPage - 1) * this.recordsPerPage;
-      const end = this.recordsPerPage;
+      const limit = this.recordsPerPage;
 
-      const filters = [];
+      const filters = [
+        this.stringFilter("page", this.currentPage),
+        this.stringFilter("skip", start),
+        this.stringFilter("take", limit),
+      ];
 
-      const filterStart = this.stringFilter('skip', start);
-      if (filterStart) {
-        filters.push(filterStart);
-      }
-
-      const filterEnd = this.stringFilter('take', end);
-      if (filterEnd) {
-        filters.push(filterEnd);
-      }
-
-      return filters.join('&');
+      return filters.filter(Boolean).join("&");
     },
     filteredRecords() {
-      this.filteredData = this.tableData.data
-        .filter((record) => {
-          return (
-            record.name.toString().includes(this.filterText) ||
-            record.status.toString().includes(this.filterText)
-          );
-        });
-    }
+      this.filteredData = this.tableData.data.filter((record) => {
+        return (
+          record.name.toString().includes(this.filterText) ||
+          record.status.toString().includes(this.filterText)
+        );
+      });
+    },
   },
 };
 </script>
